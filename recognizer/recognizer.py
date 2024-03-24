@@ -5,18 +5,15 @@ from recognizer.exceptions import NotAvailableRegion, NotDetectedPlatesOnImage
 
 
 class PlateNumberRecognizer:
-    def __init__(self, available_regions: list[str] = 'ru'):
+    default_available_regions: set[str] = {'ru'}
+
+    def __init__(self, available_regions: set[str] | None = None):
+        self.available_regions = available_regions or self.default_available_regions
+
         self._plate_reading_detector = NumberPlateDetectionAndReading(
             task='number_plate_detection_and_reading_trt',
             image_loader='opencv',
-            options={
-                'class_region': [
-                    'ru',
-                ]
-            },
-            default_label='ru',
         )
-        self.available_regions = {region.lower() for region in available_regions}
 
     def get_plate_number(self, image) -> str:
         (
@@ -38,7 +35,7 @@ class PlateNumberRecognizer:
 
     def _validate_plate_numbers(self, plate_numbers: list[str]):
         try:
-            plate_number = plate_numbers[0][0]
+            plate_number = plate_numbers[0]
         except KeyError:
             raise NotDetectedPlatesOnImage('На изображение не найдено изображения')
         return plate_number
