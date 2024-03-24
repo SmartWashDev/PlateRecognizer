@@ -1,0 +1,9 @@
+class RecognizerError(Exception):
+    ...
+
+
+class NotDetectedPlatesOnImage(RecognizerError):
+    ...
+
+class NotAvailableRegion(RecognizerError):
+    ...
